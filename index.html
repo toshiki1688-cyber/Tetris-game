@@ -2,39 +2,41 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
-  <title>AI互动小说</title>
+  <title>俄罗斯方块</title>
   <style>
     body {
-      font-family: "Microsoft YaHei", sans-serif;
-      background: #222;
-      color: #eee;
-      padding: 20px;
-    }
-    #story {
-      margin-bottom: 20px;
-      font-size: 18px;
-      line-height: 1.6;
-    }
-    .choice {
-      display: block;
-      margin: 10px 0;
-      padding: 10px;
-      background: #444;
-      border: none;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       color: #fff;
-      cursor: pointer;
-      font-size: 16px;
-      border-radius: 5px;
+      font-family: Arial, sans-serif;
     }
-    .choice:hover {
-      background: #666;
+    canvas {
+      border: 2px solid #fff;
+      background: #222;
     }
   </style>
 </head>
 <body>
-  <h1>互动小说：迷雾森林</h1>
-  <div id="story">你醒来时，发现自己身处一片迷雾森林。前方有两条路。</div>
-  <div id="choices"></div>
+  <canvas id="tetris" width="240" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById('tetris');
+    const context = canvas.getContext('2d');
+    context.scale(20, 20);
+
+    function arenaSweep() {
+      let rowCount = 1;
+      outer: for (let y = arena.length -1; y >= 0; --y) {
+        for (let x = 0; x < arena[y].length; ++x) {
+          if (arena[y][x] === 0) {
+            continue outer;
+          }
+        }
+        const row = arena.splice(y, 1)[0].fill(0);
+        arena.unshift(row);
+        y++;  <div id="choices"></div>
 
   <script>
     const storyElement = document.getElementById("story");
