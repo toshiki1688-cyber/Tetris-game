@@ -59,8 +59,23 @@
     <button onclick="playerDrop()">↓ 下</button>
     <button onclick="playerRotate(-1)">↺ 逆时针</button>
     <button onclick="playerRotate(1)">↻ 顺时针</button>
+    
   </div>
   <script>
+
+    function playerHardDrop() {
+  while (!collide(arena, player)) {
+    player.pos.y++;
+  }
+  player.pos.y--; // 回到最后合法位置
+  merge(arena, player);
+  playerReset();
+  arenaSweep();
+  soundDrop.currentTime = 0;
+  soundDrop.play();
+  dropCounter = 0;
+    }
+    
     const canvas = document.getElementById('tetris');
     const context = canvas.getContext('2d');
     context.scale(20, 20);
@@ -85,7 +100,8 @@
         y++;
         player.score += rowCount * 10;
         rowCount *= 2;
-        soundClear.play();
+        soundDrop.currentTime = 0;
+        soundDrop.play();
       }
       updateScore();
     }
@@ -195,6 +211,7 @@
           return;
         }
       }
+      soundRotate.currentTime = 0;
       soundRotate.play();
     }
 
