@@ -1,0 +1,109 @@
+`html
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>AI互动小说</title>
+  <style>
+    body {
+      font-family: "Microsoft YaHei", sans-serif;
+      background: #222;
+      color: #eee;
+      padding: 20px;
+    }
+    #story {
+      margin-bottom: 20px;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .choice {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      background: #444;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+    .choice:hover {
+      background: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>互动小说：迷雾森林</h1>
+  <div id="story">你醒来时，发现自己身处一片迷雾森林。前方有两条路。</div>
+  <div id="choices"></div>
+
+  <script>
+    const storyElement = document.getElementById("story");
+    const choicesElement = document.getElementById("choices");
+
+    const storyData = {
+      start: {
+        text: "你醒来时，发现自己身处一片迷雾森林。前方有两条路。",
+        choices: [
+          { text: "走左边的小路", next: "leftPath" },
+          { text: "走右边的大道", next: "rightPath" }
+        ]
+      },
+      leftPath: {
+        text: "你走进小路，听到奇怪的低语声。突然，一个影子挡住了去路。",
+        choices: [
+          { text: "勇敢面对影子", next: "shadowFight" },
+          { text: "转身逃跑", next: "escape" }
+        ]
+      },
+      rightPath: {
+        text: "你走上大道，雾气渐渐散去。远处出现一座古老的城堡。",
+        choices: [
+          { text: "进入城堡", next: "castle" },
+          { text: "绕过城堡继续前行", next: "forestDeep" }
+        ]
+      },
+      shadowFight: {
+        text: "你鼓起勇气面对影子，结果发现它只是一个迷路的旅人。你们结伴而行。",
+        choices: [
+          { text: "继续探索森林", next: "forestDeep" }
+        ]
+      },
+      escape: {
+        text: "你拼命逃跑，结果跌入一个陷阱。游戏结束。",
+        choices: [
+          { text: "重新开始", next: "start" }
+        ]
+      },
+      castle: {
+        text: "你进入城堡，发现里面藏着古老的秘密。新的冒险开始了……",
+        choices: [
+          { text: "重新开始", next: "start" }
+        ]
+      },
+      forestDeep: {
+        text: "你深入森林，发现一片神秘的湖泊。故事还在继续……",
+        choices: [
+          { text: "重新开始", next: "start" }
+        ]
+      }
+    };
+
+    function showScene(sceneKey) {
+      const scene = storyData[sceneKey];
+      storyElement.textContent = scene.text;
+      choicesElement.innerHTML = "";
+      scene.choices.forEach(choice => {
+        const button = document.createElement("button");
+        button.textContent = choice.text;
+        button.className = "choice";
+        button.onclick = () => showScene(choice.next);
+        choicesElement.appendChild(button);
+      });
+    }
+
+    showScene("start");
+  </script>
+</body>
+</html>
+`
