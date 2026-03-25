@@ -7,9 +7,8 @@
     body {
       background: #111;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      height: 100vh;
       color: #fff;
       font-family: Arial, sans-serif;
     }
@@ -17,14 +16,44 @@
       border: 2px solid #fff;
       background: #222;
     }
+    #score {
+      margin: 10px;
+      font-size: 20px;
+    }
+    .controls {
+      margin-top: 10px;
+    }
+    .controls button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #444;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+    }
+    .controls button:hover {
+      background: #666;
+    }
   </style>
 </head>
 <body>
+  <h1>俄罗斯方块</h1>
+  <div id="score">分数: 0</div>
   <canvas id="tetris" width="240" height="400"></canvas>
+  <div class="controls">
+    <button onclick="playerMove(-1)">← 左</button>
+    <button onclick="playerMove(1)">→ 右</button>
+    <button onclick="playerDrop()">↓ 下</button>
+    <button onclick="playerRotate(-1)">↺ 逆时针</button>
+    <button onclick="playerRotate(1)">↻ 顺时针</button>
+  </div>
   <script>
     const canvas = document.getElementById('tetris');
     const context = canvas.getContext('2d');
     context.scale(20, 20);
+
+    const scoreElement = document.getElementById('score');
 
     function arenaSweep() {
       let rowCount = 1;
@@ -36,74 +65,47 @@
         }
         const row = arena.splice(y, 1)[0].fill(0);
         arena.unshift(row);
-        y++;  <div id="choices"></div>
-
-  <script>
-    const storyElement = document.getElementById("story");
-    const choicesElement = document.getElementById("choices");
-
-    const storyData = {
-      start: {
-        text: "你醒来时，发现自己身处一片迷雾森林。前方有两条路。",
-        choices: [
-          { text: "走左边的小路", next: "leftPath" },
-          { text: "走右边的大道", next: "rightPath" }
-        ]
-      },
-      leftPath: {
-        text: "你走进小路，听到奇怪的低语声。突然，一个影子挡住了去路。",
-        choices: [
-          { text: "勇敢面对影子", next: "shadowFight" },
-          { text: "转身逃跑", next: "escape" }
-        ]
-      },
-      rightPath: {
-        text: "你走上大道，雾气渐渐散去。远处出现一座古老的城堡。",
-        choices: [
-          { text: "进入城堡", next: "castle" },
-          { text: "绕过城堡继续前行", next: "forestDeep" }
-        ]
-      },
-      shadowFight: {
-        text: "你鼓起勇气面对影子，结果发现它只是一个迷路的旅人。你们结伴而行。",
-        choices: [
-          { text: "继续探索森林", next: "forestDeep" }
-        ]
-      },
-      escape: {
-        text: "你拼命逃跑，结果跌入一个陷阱。游戏结束。",
-        choices: [
-          { text: "重新开始", next: "start" }
-        ]
-      },
-      castle: {
-        text: "你进入城堡，发现里面藏着古老的秘密。新的冒险开始了……",
-        choices: [
-          { text: "重新开始", next: "start" }
-        ]
-      },
-      forestDeep: {
-        text: "你深入森林，发现一片神秘的湖泊。故事还在继续……",
-        choices: [
-          { text: "重新开始", next: "start" }
-        ]
+        y++;
+        player.score += rowCount * 10;
+        rowCount *= 2;
       }
-    };
-
-    function showScene(sceneKey) {
-      const scene = storyData[sceneKey];
-      storyElement.textContent = scene.text;
-      choicesElement.innerHTML = "";
-      scene.choices.forEach(choice => {
-        const button = document.createElement("button");
-        button.textContent = choice.text;
-        button.className = "choice";
-        button.onclick = () => showScene(choice.next);
-        choicesElement.appendChild(button);
-      });
+      updateScore();
     }
 
-    showScene("start");
-  </script>
-</body>
-</html>
+    function collide(arena, player) {
+      const m = player.matrix;
+      const o = player.pos;
+      for (let y = 0; y < m.length; ++y) {
+        for (let x = 0; x < m[y].length; ++x) {
+          if (m[y][x] !== 0 &&
+             (arena[y + o.y] &&
+              arena[y + o.y][x + o.x]) !== 0) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function createMatrix(w, h) {
+      const matrix = [];
+      while (h--) {
+        matrix.push(new Array(w).fill(0));
+      }
+      return matrix;
+    }
+
+    function createPiece(type) {
+      if (type === 'T') {
+        return [[0,0,0],[1,1,1],[0,1,0]];
+      } else if (type === 'O') {
+        return [[2,2],[2,2]];
+      } else if (type === 'L') {
+        return [[0,3,0],[0,3,0],[0,3,3]];
+      } else if (type === 'J') {
+        return [[0,4,0],[0,4,0],[4,4,0]];
+      } else if (type === 'I') {
+        return [[0,5,0,0],[0,5,0,0],[0,5,0,0],[0,5,0,0]];
+      } else if (type === 'S') {
+        return [[0,6,6],[6,6,0],[0,0,0]];
+      } else if (
